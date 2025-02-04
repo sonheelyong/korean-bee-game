@@ -1,5 +1,6 @@
 package com.project.side.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import com.project.side.dto.UserDto;
 import com.project.side.service.RegisterService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class MainController {
@@ -37,7 +39,7 @@ public class MainController {
 	// 게임시작 시 자음,모음 랜덤 가져옴(기본 5개씩)
 	@RequestMapping("/getSpelling")  
 	@ResponseBody
-	public List<JsonObject> getSpelling(HttpServletRequest request, Model model) {
+	public List<JsonObject> getSpelling(HttpServletRequest request) {
 	
 		List<String> itemA = new ArrayList<>(Arrays.asList("ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"));
 		List<String> itemB = new ArrayList<>(Arrays.asList("ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ", "ㅡ", "ㅣ", "ㅐ", "ㅔ"));
@@ -66,16 +68,27 @@ public class MainController {
 	// 답변확인
 	@RequestMapping("/getAnswer")  
 	@ResponseBody
-	public List<JsonObject> getAnswer(HttpServletRequest request, Model model) {
-	
-		return randomSepll;  
+	public JsonObject getAnswer(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		JsonObject answerJson = new JsonObject();
+		
+		String answer = request.getParameter("answer");
+		System.out.println(answer);
+		
+		apiTest apiTest = new apiTest();
+		answerJson = apiTest.apiTest2(answer);
+		
+		System.out.println("메인컨트롤러" + answerJson);
+		
+		return answerJson;
+		
 	}
 	
 	
 	
 	
 	//////////////////////////////////
-	
+	//
 	
 	@RequestMapping("/toRegister")  
 	public String toResgister(HttpServletRequest request, Model model) {
