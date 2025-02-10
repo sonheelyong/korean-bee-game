@@ -1,14 +1,16 @@
-package com.project.side.service.impl;
+package com.project.side.dao.impl;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import com.project.side.dao.RegisterDao;
 import com.project.side.dto.UserDto;
 import com.project.side.service.RegisterService;
 
-@Service
-public class RegisterServiceImpl implements RegisterService{
+@Repository("RegisterDao")
+public class RegisterDaoImpl implements RegisterDao{
 	
 	@Autowired
     private SqlSession sqlSession;

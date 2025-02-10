@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 public class apiTest {
 	public static JsonObject apiTest2(String answer) {
 		
-		JsonObject answerJson = new JsonObject();
+		JsonObject requestJson = new JsonObject();
 		try {
 			String key = "4D4F9F28A712D9D6A5321DE2315F7FC3";
 			String word = answer;
@@ -36,16 +36,16 @@ public class apiTest {
 					System.out.println("link : " + getValue("link", element));
 					System.out.println();
 					
-					answerJson.addProperty("word", getValue("word", element));
-					answerJson.addProperty("pos", getValue("pos", element));
-					answerJson.addProperty("definition", getValue("definition", element));
+					requestJson.addProperty("word", getValue("word", element));
+					requestJson.addProperty("pos", getValue("pos", element));
+					requestJson.addProperty("definition", getValue("definition", element));
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("answerList" + answerJson);
-		return answerJson;
+		System.out.println("answerList" + requestJson);
+		return requestJson;
 	}
 
 	public static String getValue(String tag, Element element) {

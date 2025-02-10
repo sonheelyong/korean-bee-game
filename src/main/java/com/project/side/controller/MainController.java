@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.JsonObject;
 import com.project.side.dto.UserDto;
+import com.project.side.service.CheckService;
 import com.project.side.service.RegisterService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class MainController {
 	
 	@Autowired private RegisterService resgisterService;
+	@Autowired private CheckService checkService;
+	
+	//랜덤 자모음 전역변수 설정
+	List<Character> spellA = new ArrayList<>();
+	List<Character> spellB = new ArrayList<>();
 	
 	@RequestMapping(value = "/")
 	public String main() {
@@ -41,14 +47,19 @@ public class MainController {
 	@ResponseBody
 	public List<JsonObject> getSpelling(HttpServletRequest request) {
 	
-		List<String> itemA = new ArrayList<>(Arrays.asList("ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"));
-		List<String> itemB = new ArrayList<>(Arrays.asList("ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ", "ㅡ", "ㅣ", "ㅐ", "ㅔ"));
+//		List<Character> itemAB = new ArrayList<>(Arrays.asList("ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"));
+//		List<Character> itemBB = new ArrayList<>(Arrays.asList("ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ", "ㅡ", "ㅣ", "ㅐ", "ㅔ"));
+		
+		List<Character> itemA = Arrays.asList('ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅍ','ㅌ','ㅎ');
+		List<Character> itemB = Arrays.asList('ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ','ㅜ','ㅠ','ㅡ','ㅣ');
 		
 		Collections.shuffle(itemA);  
-		List<String> spellingA = itemA.subList(0, 5);  
+		List<Character> spellingA = itemA.subList(0, 5);
+		spellA = spellingA;
         
 		Collections.shuffle(itemB);  // 리스트를 랜덤하게 섞음
-		List<String> spellingB = itemB.subList(0, 5);  // 처음 N개 선택
+		List<Character> spellingB = itemB.subList(0, 5);  // 처음 N개 선택
+		spellB = spellingB;
         
 		List<JsonObject> randomSepll = new ArrayList<>();
 		
@@ -69,20 +80,30 @@ public class MainController {
 	@RequestMapping("/getAnswer")  
 	@ResponseBody
 	public JsonObject getAnswer(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		
-		JsonObject answerJson = new JsonObject();
+		JsonObject requestJson = new JsonObject();
 		
 		String answer = request.getParameter("answer");
 		System.out.println(answer);
 		
-		apiTest apiTest = new apiTest();
-		answerJson = apiTest.apiTest2(answer);
+		// 답변 확인
+		String checkRequest = checkService.checkAnswer(spellA,spellB,answer);
+		// 0: 자,모음 포함(정상) , 1: 미포함 , 2: 한글아님
+		if(!"0".equals(checkRequest)) {
+			requestJson.addProperty("word", checkRequest);
+		}
 		
-		System.out.println("메인컨트롤러" + answerJson);
+		else {		
+		// 사전api 호출
+		apiTest apiTest = new apiTest();		
+		requestJson = apiTest.apiTest2(answer);
 		
-		return answerJson;
+		System.out.println("메인컨트롤러" + requestJson);
+		}
+		
+		return requestJson;
 		
 	}
+	
 	
 	
 	
